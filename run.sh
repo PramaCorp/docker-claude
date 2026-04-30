@@ -1,8 +1,19 @@
 #!/bin/sh
 
+
+case "$1" in
+  -*)
+    set "claude" "$@"
+    ;;
+  '')
+    set "claude"
+    ;;
+esac
+
 docker run -it \
   --rm \
-  --name claude \
+  --name claude.$$ \
   -v ./:/workspace \
-  claude claude
-  #-u "501:20" \
+  -v "$HOME"/.claude:/home/node/.claude \
+  -v "$HOME"/.claude.json:/home/node/.claude.json \
+  claude "$@"
