@@ -6,26 +6,13 @@ ENV TZ="$TZ"
 ARG CLAUDE_CODE_VERSION=latest
 
 # Install basic development tools and iptables/ipset
-RUN apt-get update && apt-get install -y --no-install-recommends \
-  less \
-  git \
-  procps \
-  sudo \
-  fzf \
-  zsh \
-  man-db \
-  unzip \
-  gnupg2 \
-  gh \
-  iptables \
-  ipset \
-  iproute2 \
-  dnsutils \
-  aggregate \
-  jq \
-  nano \
-  vim \
-  && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN \
+  --mount=type=cache,target=/var/lib/apt,sharing=locked \
+  --mount=type=cache,target=/var/cache/apt,sharing=locked \
+  apt-get update && \
+    apt-get install -y --no-install-recommends \
+    less git procps sudo fzf zsh man-db unzip gnupg2 gh iptables ipset \
+    iproute2 dnsutils aggregate shellcheck jq nano vim
 
 # Ensure default node user has access to /usr/local/share
 RUN mkdir -p /usr/local/share/npm-global && \
