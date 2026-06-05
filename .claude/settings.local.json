@@ -5,7 +5,9 @@
       "Bash(curl -s --connect-timeout 5 https://httpbin.org/ip)",
       "Bash(iptables -L -n)",
       "Bash(sudo iptables *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git config *)"
     ]
   }
 }
