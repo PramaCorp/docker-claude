@@ -13,21 +13,16 @@ RUN \
     less git procps sudo fzf zsh man-db unzip gnupg2 gh \
     iproute2 dnsutils shellcheck jq nano vim gosu
 
-# Ensure node user has access to npm global dir
-RUN mkdir -p /usr/local/share/npm-global && \
-  chown -R node:node /usr/local/share
-
-# Persist shell history
-RUN mkdir /commandhistory && \
-  touch /commandhistory/.bash_history && \
-  chown -R node:node /commandhistory
-
 ENV DEVCONTAINER=true
 
-RUN mkdir -p /workspace /home/node/.claude && \
-  chown -R node:node /workspace /home/node/.claude
+# Ensure node user has access to npm global dir, shell history, workspace, and claude config
+RUN mkdir -p /usr/local/share/npm-global /commandhistory /workspace /home/node/.claude && \
+  touch /commandhistory/.bash_history && \
+  chown -R node:node /usr/local/share /commandhistory /workspace /home/node/.claude
 
 WORKDIR /workspace
+
+COPY --from=ghcr.io/astral-sh/uv:0.11.28 /uv /uvx /bin/
 
 ARG GIT_DELTA_VERSION=0.18.2
 RUN ARCH=$(dpkg --print-architecture) && \
