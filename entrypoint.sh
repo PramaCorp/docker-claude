@@ -8,6 +8,12 @@ if [ -z "$HOST_UID" ] || [ -z "$HOST_GID" ] || [ -z "$HOST_USER" ]; then
     exit 1
 fi
 
+# Append the docker-specific system prompt whenever we're launching claude
+if [ "$1" = "claude" ]; then
+    shift
+    set -- claude --append-system-prompt-file /usr/local/share/claude/prompt-docker.md "$@"
+fi
+
 # If host is root, skip user setup
 if [ "$HOST_UID" = "0" ]; then
     exec "$@"

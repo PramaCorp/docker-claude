@@ -58,5 +58,7 @@ RUN sed -i 's/^UID_MIN.*/UID_MIN\t\t100/' /etc/login.defs && \
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
+COPY prompt-docker.md /usr/local/share/claude/prompt-docker.md
+
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["claude"]
