@@ -10,15 +10,14 @@ RUN \
   --mount=type=cache,target=/var/cache/apt,sharing=locked \
   apt-get update && \
   apt-get install -y --no-install-recommends \
-    less git procps sudo fzf zsh man-db unzip gnupg2 gh \
+    less git procps sudo man-db unzip gnupg2 gh \
     iproute2 dnsutils shellcheck jq nano vim gosu
 
 ENV DEVCONTAINER=true
 
-# Ensure node user has access to npm global dir, shell history, workspace, and claude config
-RUN mkdir -p /usr/local/share/npm-global /commandhistory /workspace /home/node/.claude && \
-  touch /commandhistory/.bash_history && \
-  chown -R node:node /usr/local/share /commandhistory /workspace /home/node/.claude
+# Ensure node user has access to npm global dir, workspace, and claude config
+RUN mkdir -p /usr/local/share/npm-global /workspace /home/node/.claude && \
+  chown -R node:node /usr/local/share /workspace /home/node/.claude
 
 WORKDIR /workspace
 
@@ -34,18 +33,9 @@ USER node
 
 ENV NPM_CONFIG_PREFIX=/usr/local/share/npm-global
 ENV PATH=$PATH:/usr/local/share/npm-global/bin
-ENV SHELL=/bin/zsh
+ENV SHELL=/bin/bash
 ENV EDITOR=vim
 ENV VISUAL=vim
-
-ARG ZSH_IN_DOCKER_VERSION=1.2.0
-RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v${ZSH_IN_DOCKER_VERSION}/zsh-in-docker.sh)" -- \
-  -p git \
-  -p fzf \
-  -a "source /usr/share/doc/fzf/examples/key-bindings.zsh" \
-  -a "source /usr/share/doc/fzf/examples/completion.zsh" \
-  -a "export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhistory/.bash_history" \
-  -x
 
 RUN npm install -g @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}
 
