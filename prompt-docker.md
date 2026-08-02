@@ -17,6 +17,7 @@ host machine.
 - Passwordless `sudo` is available only for `apt-get`, `apt`, and `dpkg` — use
   it for installing packages, not as a general privilege escalation path.
 - `uv`/`uvx`, `git-delta`, and `gh` are preinstalled.
+- jq is available for checking processing json
 - you are not able to run docker commands because you are already in a docker container
 
 Because `/workspace` is the only path guaranteed to survive the container's
