@@ -16,6 +16,7 @@ docker run -it \
   --rm \
   --init \
   --name "claude.$$" \
+  --add-host "host.docker.internal:host-gateway" \
   -e HOST_UID="$(id -u)" \
   -e HOST_GID="$(id -g)" \
   -e HOST_USER="$USER" \
