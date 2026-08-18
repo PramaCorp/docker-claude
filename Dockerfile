@@ -22,6 +22,7 @@ RUN mkdir -p /usr/local/share/npm-global /workspace /home/node/.claude && \
 WORKDIR /workspace
 
 COPY --from=ghcr.io/astral-sh/uv:0.11.28 /uv /uvx /bin/
+RUN uv install pyaml
 
 ARG GIT_DELTA_VERSION=0.18.2
 RUN ARCH=$(dpkg --print-architecture) && \
