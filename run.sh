@@ -20,7 +20,7 @@ docker run -it \
   -e HOST_UID="$(id -u)" \
   -e HOST_GID="$(id -g)" \
   -e HOST_USER="$USER" \
-  -v ./:/workspace \
+  -v "$PWD:$PWD" \
   -v "$HOME/.claude":/home/node/.claude \
   -v "$HOME/.claude.json":/home/node/.claude.json \
   claude "$@"

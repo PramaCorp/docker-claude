@@ -16,10 +16,8 @@ RUN \
 ENV DEVCONTAINER=true
 
 # Ensure node user has access to npm global dir, workspace, and claude config
-RUN mkdir -p /usr/local/share/npm-global /workspace /home/node/.claude && \
-  chown -R node:node /usr/local/share /workspace /home/node/.claude
-
-WORKDIR /workspace
+RUN mkdir -p /usr/local/share/npm-global /home/node/.claude && \
+  chown -R node:node /usr/local/share /home/node/.claude
 
 COPY --from=ghcr.io/astral-sh/uv:0.11.28 /uv /uvx /bin/
 
