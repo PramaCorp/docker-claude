@@ -17,10 +17,11 @@ docker run -it \
   --init \
   --name "claude.$$" \
   --add-host "host.docker.internal:host-gateway" \
-  -e HOST_UID="$(id -u)" \
-  -e HOST_GID="$(id -g)" \
-  -e HOST_USER="$USER" \
-  -v "$PWD:$PWD" \
-  -v "$HOME/.claude":/home/node/.claude \
-  -v "$HOME/.claude.json":/home/node/.claude.json \
+  --env HOST_UID="$(id -u)" \
+  --env HOST_GID="$(id -g)" \
+  --env HOST_USER="$USER" \
+  --volume "$PWD:$PWD" \
+  --volume "$HOME/.claude":/home/node/.claude \
+  --volume "$HOME/.claude.json":/home/node/.claude.json \
+  --workdir "$PWD" \
   claude "$@"
