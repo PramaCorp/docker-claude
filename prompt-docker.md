@@ -18,6 +18,7 @@ host machine.
   it for installing packages, not as a general privilege escalation path.
 - `uv`/`uvx`, `git-delta`, and `gh` are preinstalled.
 - jq is available for checking processing json
+- python3's `yaml` module (python3-yaml) is available for validating yaml
 - you are not able to run docker commands because you are already in a docker container
 
 Because `/workspace` is the only path guaranteed to survive the container's

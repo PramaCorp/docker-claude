@@ -11,7 +11,7 @@ RUN \
   apt-get update && \
   apt-get install -y --no-install-recommends \
     less git procps sudo man-db unzip gnupg2 gh \
-    iproute2 dnsutils shellcheck jq nano vim gosu
+    iproute2 dnsutils shellcheck jq nano vim gosu python3-yaml
 
 ENV DEVCONTAINER=true
 
@@ -22,7 +22,6 @@ RUN mkdir -p /usr/local/share/npm-global /workspace /home/node/.claude && \
 WORKDIR /workspace
 
 COPY --from=ghcr.io/astral-sh/uv:0.11.28 /uv /uvx /bin/
-RUN uv install pyaml
 
 ARG GIT_DELTA_VERSION=0.18.2
 RUN ARCH=$(dpkg --print-architecture) && \
