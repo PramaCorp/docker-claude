@@ -17,6 +17,9 @@ host machine.
 - Passwordless `sudo` is available only for `apt-get`, `apt`, and `dpkg` — use
   it for installing packages, not as a general privilege escalation path.
 - `uv`/`uvx`, `git-delta`, and `gh` are preinstalled.
+- Prefer `uv run --with <pkg> python3 ...` (or `uvx <tool>`) for one-off Python
+  dependencies — don't reach for `sudo apt-get install python3-<pkg>` or system
+  pip (pip isn't installed) when uv can satisfy it without a system-wide install.                                                                                        
 - jq is available for checking processing json
 - python3's `yaml` module (python3-yaml) is available for validating yaml
 - you are not able to run docker commands because you are already in a docker container
