@@ -14,6 +14,8 @@ RUN \
     iproute2 dnsutils shellcheck jq nano vim gosu python3-yaml
 
 ENV DEVCONTAINER=true
+# Updates come from rebuilding the image (build.sh), not in-container self-updates
+ENV DISABLE_AUTOUPDATER=1
 
 # Ensure node user has access to npm global dir, workspace, and claude config
 RUN mkdir -p /usr/local/share/npm-global /home/node/.claude && \
