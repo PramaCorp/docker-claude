@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 
-date
 
 if [ -z "$HOST_UID" ] || [ -z "$HOST_GID" ] || [ -z "$HOST_USER" ]; then
     echo "ERROR: HOST_UID, HOST_GID, and HOST_USER must be set." >&2
@@ -50,5 +49,4 @@ chmod 0440 /etc/sudoers.d/user-pkgmgmt
 
 export HOME=/home/node
 
-date
 exec gosu "$HOST_UID" "$@"
