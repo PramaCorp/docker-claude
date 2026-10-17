@@ -22,11 +22,8 @@ fi
 CLAUDE_CODE_VERSION=""
 test -f "$VERSION_CACHE" && CLAUDE_CODE_VERSION=$(cat "$VERSION_CACHE")
 
-BUILD_ARGS=""
-if test -n "$CLAUDE_CODE_VERSION"; then
-  BUILD_ARGS="--build-arg CLAUDE_CODE_VERSION=$CLAUDE_CODE_VERSION"
-else
+if test -z "$CLAUDE_CODE_VERSION"; then
   echo "warning: could not resolve latest claude-code version, falling back to Dockerfile default" >&2
 fi
 
-docker build $BUILD_ARGS -t claude .
+docker build ${CLAUDE_CODE_VERSION:+--build-arg "CLAUDE_CODE_VERSION=$CLAUDE_CODE_VERSION"} -t claude .
