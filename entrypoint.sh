@@ -9,6 +9,23 @@ if [ -z "$HOST_UID" ] || [ -z "$HOST_GID" ] || [ -z "$HOST_USER" ]; then
     exit 1
 fi
 
+# Run the command, resuming it whenever it stops (e.g. ctrl-z): there's no
+# shell in the container to take the terminal back, so it would hang forever.
+run() {
+    set +e -m
+    "$@"
+    resume
+}
+
+# Recursion rather than a loop: bash breaks out of a loop when a job in it stops
+resume() {
+    status=$?
+    [ -z "$(jobs -p)" ] && exit $status
+    echo "No shell to suspend to in this container; resuming automatically." >&2
+    fg > /dev/null
+    resume
+}
+
 # Append the docker-specific system prompt whenever we're launching claude
 if [ "$1" = "claude" ]; then
     shift
@@ -17,7 +34,7 @@ fi
 
 # If host is root, skip user setup
 if [ "$HOST_UID" = "0" ]; then
-    exec "$@"
+    run "$@"
 fi
 
 # Create group for HOST_GID, or rename the existing one to match
@@ -49,4 +66,4 @@ chmod 0440 /etc/sudoers.d/user-pkgmgmt
 
 export HOME=/home/node
 
-exec gosu "$HOST_UID" "$@"
+run gosu "$HOST_UID" "$@"
