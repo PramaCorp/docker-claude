@@ -30,5 +30,6 @@ docker run -it \
   --volume "$PWD:$PWD" \
   --volume "$HOME/.claude":/home/node/.claude \
   --volume "$HOME/.claude.json":/home/node/.claude.json \
+  --volume "$HOME/.gitconfig":/home/node/.gitconfig \
   --workdir "$PWD" \
   claude "$@"
