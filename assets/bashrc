@@ -1,0 +1,24 @@
+# ~/.bashrc for interactive bash in the dclaude container
+
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
+# Per-project history dir mounted by run.sh. Write each command as it runs:
+# shells are killed, not exited, when the container stops.
+if [ -d ~/.history ]; then
+    HISTFILE=~/.history/bash_history
+fi
+HISTSIZE=10000
+HISTFILESIZE=100000
+HISTCONTROL=ignoreboth
+shopt -s histappend
+PROMPT_COMMAND="history -a${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+
+shopt -s checkwinsize
+
+PS1='\u@\h:\w\$ '
+
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'

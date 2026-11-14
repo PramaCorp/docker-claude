@@ -26,6 +26,15 @@ resume() {
     resume
 }
 
+# The user's shell: bash (default) or zsh
+case "${DCLAUDE_SHELL:=bash}" in
+    bash|zsh) export SHELL="/bin/$DCLAUDE_SHELL" ;;
+    *)
+        echo "ERROR: DCLAUDE_SHELL must be bash or zsh, not '$DCLAUDE_SHELL'." >&2
+        exit 1
+        ;;
+esac
+
 # Append the docker-specific system prompt whenever we're launching claude
 if [ "$1" = "claude" ]; then
     shift
@@ -34,6 +43,7 @@ fi
 
 # If host is root, skip user setup
 if [ "$HOST_UID" = "0" ]; then
+    usermod -s "$SHELL" root
     run "$@"
 fi
 
@@ -55,8 +65,9 @@ if getent passwd "$HOST_UID" > /dev/null 2>&1; then
         usermod -l "$HOST_USER" -d /home/node "$EXISTING"
     fi
 else
-    useradd -u "$HOST_UID" -g "$HOST_GID" -d /home/node -s /bin/bash --no-create-home "$HOST_USER"
+    useradd -u "$HOST_UID" -g "$HOST_GID" -d /home/node --no-create-home "$HOST_USER"
 fi
+usermod -s "$SHELL" "$HOST_USER"
 
 # Passwordless sudo for package management — extend this list as needed
 cat > /etc/sudoers.d/user-pkgmgmt << EOF

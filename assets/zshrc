@@ -1,0 +1,20 @@
+# ~/.zshrc for interactive zsh in the dclaude container
+
+# Per-project history dir mounted by run.sh. Write each command as it runs:
+# shells are killed, not exited, when the container stops.
+if [[ -d ~/.history ]]; then
+    HISTFILE=~/.history/zsh_history
+else
+    HISTFILE=~/.zsh_history
+fi
+HISTSIZE=10000
+SAVEHIST=100000
+setopt INC_APPEND_HISTORY HIST_IGNORE_DUPS HIST_IGNORE_SPACE EXTENDED_HISTORY
+
+bindkey -e
+autoload -Uz compinit && compinit
+
+PROMPT='%n@%m:%~%# '
+
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'

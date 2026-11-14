@@ -26,4 +26,4 @@ if test -z "$CLAUDE_CODE_VERSION"; then
   echo "warning: could not resolve latest claude-code version, falling back to Dockerfile default" >&2
 fi
 
-docker build ${CLAUDE_CODE_VERSION:+--build-arg "CLAUDE_CODE_VERSION=$CLAUDE_CODE_VERSION"} -t claude .
+docker build ${CLAUDE_CODE_VERSION:+--build-arg "CLAUDE_CODE_VERSION=$CLAUDE_CODE_VERSION"} -t dclaude .

@@ -60,5 +60,14 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 
 COPY prompt-docker.md /usr/local/share/claude/prompt-docker.md
 
+RUN \
+  --mount=type=cache,target=/var/lib/apt,sharing=locked \
+  --mount=type=cache,target=/var/cache/apt,sharing=locked \
+  apt-get install -y --no-install-recommends zsh
+
+# Shell configs, keeping history in the per-project dir run.sh mounts
+COPY assets/bashrc /home/node/.bashrc
+COPY assets/zshrc /home/node/.zshrc
+
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["claude"]
