@@ -14,11 +14,22 @@ HISTSIZE=10000
 HISTFILESIZE=100000
 HISTCONTROL=ignoreboth
 shopt -s histappend
-PROMPT_COMMAND="history -a${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
 
 shopt -s checkwinsize
 
-PS1='\u@\h:\w\$ '
+# dclaude marker (the hostname is a meaningless container id), dir, git
+# branch, and the last exit status when it failed; # rather than ❯ for root
+. /usr/lib/git-core/git-sh-prompt
+__dclaude_prompt() {
+    local status=$? end='❯'
+    [ "$EUID" = 0 ] && end='#'
+    local post=" $end "
+    [ "$status" != 0 ] && post=" \[\e[31m\]$status\[\e[0m\]$post"
+    __git_ps1 '\[\e[36m\]dclaude\[\e[0m\] \[\e[34m\]\w\[\e[0m\]' "$post" \
+        ' \[\e[35m\](%s)\[\e[0m\]'
+}
+# The prompt first, so it sees the command's exit status
+PROMPT_COMMAND="__dclaude_prompt; history -a${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
 
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'

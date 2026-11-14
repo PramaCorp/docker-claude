@@ -65,6 +65,9 @@ RUN \
   --mount=type=cache,target=/var/cache/apt,sharing=locked \
   apt-get install -y --no-install-recommends zsh
 
+# UTF-8 rather than POSIX, so shells measure characters like the prompt's ❯
+ENV LANG=C.UTF-8
+
 # Shell configs, keeping history in the per-project dir run.sh mounts
 COPY assets/bashrc /home/node/.bashrc
 COPY assets/zshrc /home/node/.zshrc

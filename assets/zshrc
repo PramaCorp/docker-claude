@@ -14,7 +14,17 @@ setopt INC_APPEND_HISTORY HIST_IGNORE_DUPS HIST_IGNORE_SPACE EXTENDED_HISTORY
 bindkey -e
 autoload -Uz compinit && compinit
 
-PROMPT='%n@%m:%~%# '
+# Git branch in the prompt (branch only: dirty checks are slow on bind mounts)
+autoload -Uz vcs_info
+precmd_functions+=(vcs_info)
+zstyle ':vcs_info:*' enable git
+zstyle ':vcs_info:git:*' formats ' %F{magenta}(%b)%f'
+zstyle ':vcs_info:git:*' actionformats ' %F{magenta}(%b|%a)%f'
+setopt PROMPT_SUBST
+
+# dclaude marker (the hostname is a meaningless container id), dir, branch,
+# and the last exit status when it failed; # rather than ❯ for root
+PROMPT='%F{cyan}dclaude%f %F{blue}%~%f${vcs_info_msg_0_} %(?..%F{red}%?%f )%(!.#.❯) '
 
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
