@@ -14,17 +14,43 @@ setopt INC_APPEND_HISTORY HIST_IGNORE_DUPS HIST_IGNORE_SPACE EXTENDED_HISTORY
 bindkey -e
 autoload -Uz compinit && compinit
 
-# Git branch in the prompt (branch only: dirty checks are slow on bind mounts)
-autoload -Uz vcs_info
-precmd_functions+=(vcs_info)
-zstyle ':vcs_info:*' enable git
-zstyle ':vcs_info:git:*' formats ' %F{magenta}(%b)%f'
-zstyle ':vcs_info:git:*' actionformats ' %F{magenta}(%b|%a)%f'
 setopt PROMPT_SUBST
 
-# dclaude marker (the hostname is a meaningless container id), dir, branch,
-# and the last exit status when it failed; # rather than ❯ for root
-PROMPT='%F{cyan}dclaude%f %F{blue}%~%f${vcs_info_msg_0_} %(?..%F{red}%?%f )%(!.#.❯) '
+# The dir with its last part in full and as many whole parts before it as fit
+# in 10 chars, eg /Users/fess/check/prama/dclaude -> …/prama/dclaude
+__dclaude_dir() {
+    local p=${PWD/#$HOME/\~} max=10
+    local head=${p%/*} tail=${p##*/} kept='' part
+    if (( ${#head} > max )); then
+        while [[ $head == */* ]]; do
+            part=/${head##*/}
+            (( ${#kept} + ${#part} > max )) && break
+            kept=$part$kept
+            head=${head%/*}
+        done
+        p=…$kept/$tail
+    fi
+    __dclaude_dir=${p//\%/%%}  # % is special in the prompt
+}
+
+# dclaude marker (the hostname is a meaningless container id), git branch,
+# dir, and the last exit status when it failed; # rather than ❯ for root.
+# Git's markers after the branch: * unstaged, + staged, $ stash,
+# < > <> = vs upstream. Untracked is left out as slow on bind mounts; turn
+# off the dirty check in a slow repo with: git config bash.showDirtyState false
+. /usr/lib/git-core/git-sh-prompt
+GIT_PS1_SHOWDIRTYSTATE=1
+GIT_PS1_SHOWSTASHSTATE=1
+GIT_PS1_SHOWUPSTREAM=auto
+GIT_PS1_STATESEPARATOR=' %F{yellow}'  # markers in yellow
+__dclaude_prompt() {
+    __dclaude_dir
+    # Sets PROMPT; the format is printf'd, hence %%
+    __git_ps1 '%F{green}dclaude%f' \
+        ' %F{cyan}${__dclaude_dir}%f %(?..%F{red}%?%f )%(!.#.❯) ' \
+        ' %%F{blue}git:%%F{red}%s%%f'
+}
+precmd_functions+=(__dclaude_prompt)
 
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'

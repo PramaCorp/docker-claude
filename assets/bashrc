@@ -17,16 +17,43 @@ shopt -s histappend
 
 shopt -s checkwinsize
 
-# dclaude marker (the hostname is a meaningless container id), dir, git
-# branch, and the last exit status when it failed; # rather than ❯ for root
+# The dir with its last part in full and as many whole parts before it as fit
+# in 10 chars, eg /Users/fess/check/prama/dclaude -> …/prama/dclaude
+__dclaude_dir() {
+    local p=${PWD/#$HOME/\~} max=10
+    local head=${p%/*} tail=${p##*/} kept='' part
+    if (( ${#head} > max )); then
+        while [[ $head == */* ]]; do
+            part=/${head##*/}
+            (( ${#kept} + ${#part} > max )) && break
+            kept=$part$kept
+            head=${head%/*}
+        done
+        p=…$kept/$tail
+    fi
+    __dclaude_dir=$p
+}
+
+# dclaude marker (the hostname is a meaningless container id), git branch,
+# dir, and the last exit status when it failed; # rather than ❯ for root.
+# Git's markers after the branch: * unstaged, + staged, $ stash,
+# < > <> = vs upstream. Untracked is left out as slow on bind mounts; turn
+# off the dirty check in a slow repo with: git config bash.showDirtyState false
 . /usr/lib/git-core/git-sh-prompt
+GIT_PS1_SHOWDIRTYSTATE=1
+GIT_PS1_SHOWSTASHSTATE=1
+GIT_PS1_SHOWUPSTREAM=auto
+GIT_PS1_STATESEPARATOR=' \[\e[33m\]'  # markers in yellow
 __dclaude_prompt() {
     local status=$? end='❯'
+    __dclaude_dir
     [ "$EUID" = 0 ] && end='#'
     local post=" $end "
     [ "$status" != 0 ] && post=" \[\e[31m\]$status\[\e[0m\]$post"
-    __git_ps1 '\[\e[36m\]dclaude\[\e[0m\] \[\e[34m\]\w\[\e[0m\]' "$post" \
-        ' \[\e[35m\](%s)\[\e[0m\]'
+    # The dir by reference, so its name isn't parsed as prompt code
+    post=' \[\e[36m\]${__dclaude_dir}\[\e[0m\]'$post
+    __git_ps1 '\[\e[32m\]dclaude\[\e[0m\]' "$post" \
+        ' \[\e[34m\]git:\[\e[31m\]%s\[\e[0m\]'
 }
 # The prompt first, so it sees the command's exit status
 PROMPT_COMMAND="__dclaude_prompt; history -a${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
