@@ -37,7 +37,9 @@ ENV SHELL=/bin/bash
 ENV EDITOR=vim
 ENV VISUAL=vim
 
-RUN npm install -g @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}
+# Drop npm's download cache: owned by node, it'd be unwritable at runtime
+RUN npm install -g @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION} && \
+  rm -rf /home/node/.npm
 
 USER root
 

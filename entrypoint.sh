@@ -64,6 +64,8 @@ $HOST_USER ALL=(root) NOPASSWD: /usr/bin/apt-get, /usr/bin/apt, /usr/bin/dpkg
 EOF
 chmod 0440 /etc/sudoers.d/user-pkgmgmt
 
+# Own the home dir itself (not -R: that's slow) so ~/.cache etc. can be created
+chown "$HOST_UID:$HOST_GID" /home/node
 export HOME=/home/node
 
 run gosu "$HOST_UID" "$@"
