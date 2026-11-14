@@ -40,7 +40,12 @@ runs `bash`
 
 ## shell
 
-the shell in the container, both for `shell.sh` and for claude's own
+`./run.sh --shell [container]`
+
+opens a shell in the running dclaude container started from the current
+directory, or in the named container if there's more than one.
+
+the shell in the container, both for `--shell` and for claude's own
 commands, is zsh if your `$SHELL` is zsh and bash otherwise. override with
 `DCLAUDE_SHELL=bash` or `DCLAUDE_SHELL=zsh`. the configs are in `assets/`.
 
