@@ -64,8 +64,10 @@ $HOST_USER ALL=(root) NOPASSWD: /usr/bin/apt-get, /usr/bin/apt, /usr/bin/dpkg
 EOF
 chmod 0440 /etc/sudoers.d/user-pkgmgmt
 
-# Own the home dir itself (not -R: that's slow) so ~/.cache etc. can be created
-chown "$HOST_UID:$HOST_GID" /home/node
+# Own the home dir itself (not -R: that's slow) so ~/.local etc. can be
+# created, and the top of the cache volume, which docker creates as root
+mkdir -p /home/node/.cache
+chown "$HOST_UID:$HOST_GID" /home/node /home/node/.cache
 export HOME=/home/node
 
 run gosu "$HOST_UID" "$@"

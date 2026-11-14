@@ -41,6 +41,14 @@ ENV VISUAL=vim
 RUN npm install -g @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION} && \
   rm -rf /home/node/.npm
 
+# ~/.cache is a per-user volume shared across containers (see run.sh):
+# keep npm's cache there too, and copy rather than hardlink from it into
+# project venvs, which are on a different filesystem. Set after the npm
+# install so the build's cache doesn't land in the image's ~/.cache, which
+# docker would copy into a new volume.
+ENV npm_config_cache=/home/node/.cache/npm
+ENV UV_LINK_MODE=copy
+
 USER root
 
 # Lower UID_MIN so useradd doesn't warn about macOS-range UIDs (501+)

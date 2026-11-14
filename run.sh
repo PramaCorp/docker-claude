@@ -18,18 +18,21 @@ case "$dir" in
   *[!a-zA-Z0-9_.-]*) dir=$(printf '%s' "$dir" | tr -c 'a-zA-Z0-9_.-' '_') ;;
 esac
 
+_uid="$(id -u)"
+
 docker run -it \
   --rm \
   --init \
   --name "claude.$dir.$$" \
   --label "claude.cwd=$PWD" \
   --add-host "host.docker.internal:host-gateway" \
-  --env HOST_UID="$(id -u)" \
+  --env HOST_UID="$_uid" \
   --env HOST_GID="$(id -g)" \
   --env HOST_USER="$USER" \
   --volume "$PWD:$PWD" \
   --volume "$HOME/.claude":/home/node/.claude \
   --volume "$HOME/.claude.json":/home/node/.claude.json \
   --volume "$HOME/.gitconfig":/home/node/.gitconfig \
+  --volume "claude-cache-$_uid":/home/node/.cache \
   --workdir "$PWD" \
   claude "$@"
